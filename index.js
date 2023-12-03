@@ -210,6 +210,7 @@ app.post("/api/v1/messages", async (req, res) => {
   }
 });
 
+// PUT endpoint to update a message by ID
 app.put("/api/v1/messages/:id", async (req, res) => {
   const messageId = req.params.id;
 
@@ -217,7 +218,7 @@ app.put("/api/v1/messages/:id", async (req, res) => {
     // Use the findByIdAndUpdate method to update the message in the database
     const updatedMessage = await Message.findByIdAndUpdate(
       messageId,
-      req.body,
+      req.body.message,
       { new: true }
     );
 
@@ -244,6 +245,7 @@ app.put("/api/v1/messages/:id", async (req, res) => {
   }
 });
 
+// DELETE endpoint to delete a message by ID
 app.delete("/api/v1/messages/:id", async (req, res) => {
   const messageId = req.params.id;
 
