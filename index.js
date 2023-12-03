@@ -105,6 +105,7 @@ app.get("/api/v1/messages", async (req, res) => {
 
   try {
     if (messageId) {
+      // Handle requests with a message ID to retrieve a specific message
       const message = await Message.findById(messageId);
 
       if (!message) {
@@ -116,22 +117,27 @@ app.get("/api/v1/messages", async (req, res) => {
 
       return res.json({
         status: "success",
+        message: `GETTING message with ID ${messageId}`,
         data: {
           message,
         },
       });
     } else if (username) {
+      // Handle requests with a username to retrieve messages by username
       const messages = await Message.find({ user: username });
       return res.json({
         status: "success",
+        message: `GET messages with username ${username}`,
         data: {
           messages,
         },
       });
     } else {
+      // Handle requests without ID or username to retrieve all messages
       const messages = await Message.find({});
       return res.json({
         status: "success",
+        message: "GETTING all messages",
         data: {
           messages,
         },
@@ -146,6 +152,37 @@ app.get("/api/v1/messages", async (req, res) => {
   }
 });
 
+// GET endpoint to retrieve a message by ID
+app.get("/api/v1/messages/:id", async (req, res) => {
+  const messageId = req.params.id;
+
+  try {
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({
+        status: "error",
+        message: `Message with ID ${messageId} not found`,
+      });
+    }
+
+    return res.json({
+      status: "success",
+      message: `GETTING message with ID ${messageId}`,
+      data: {
+        message,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+});
+
+// POST endpoint to save a new message
 app.post("/api/v1/messages", async (req, res) => {
   const { user, text } = req.body.message;
 
@@ -156,13 +193,16 @@ app.post("/api/v1/messages", async (req, res) => {
 
   try {
     const message = await newMessage.save();
+
     res.json({
       status: "success",
+      message: `POSTING a new message for user ${user}`,
       data: {
         message,
       },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       status: "error",
       message: "Failed to save message",
@@ -174,6 +214,7 @@ app.put("/api/v1/messages/:id", async (req, res) => {
   const messageId = req.params.id;
 
   try {
+    // Use the findByIdAndUpdate method to update the message in the database
     const updatedMessage = await Message.findByIdAndUpdate(
       messageId,
       req.body,
@@ -189,6 +230,7 @@ app.put("/api/v1/messages/:id", async (req, res) => {
 
     res.json({
       status: "success",
+      message: `UPDATING message with ID ${messageId}`,
       data: {
         message: updatedMessage,
       },
@@ -206,6 +248,7 @@ app.delete("/api/v1/messages/:id", async (req, res) => {
   const messageId = req.params.id;
 
   try {
+    // Use the findByIdAndDelete method to remove the message from the database
     const deletedMessage = await Message.findByIdAndDelete(messageId);
 
     if (!deletedMessage) {
@@ -217,6 +260,7 @@ app.delete("/api/v1/messages/:id", async (req, res) => {
 
     res.json({
       status: "success",
+      message: `DELETING message with ID ${messageId}`,
       data: {
         message: deletedMessage,
       },
