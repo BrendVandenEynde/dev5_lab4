@@ -1,10 +1,22 @@
 // views/index.pug
-doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title= title
-  body
-    h1= title
-    p Welcome to my homepage!
+
+block content
+  h1 Welcome to the Chat App
+  p This is a simple homepage for our chat application.
+  p Bonus: Check the console for messages retrieved from the API.
+
+  // JavaScript to fetch messages from the API
+  script.
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/v1/messages');
+        const data = await response.json();
+
+        // Display messages in the console
+        console.log(data);
+
+        // You can further display messages on the page if needed
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    });
