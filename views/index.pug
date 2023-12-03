@@ -12,10 +12,21 @@ block content
         const response = await fetch('/api/v1/messages');
         const data = await response.json();
 
-        // Display messages in the console
-        console.log(data);
+        if (data.status === 'success') {
+          const messages = data.data.messages;
 
-        // You can further display messages on the page if needed
+          // Display messages on the page
+          const messageList = document.createElement('ul');
+          messages.forEach((message) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${message.user}: ${message.text}`;
+            messageList.appendChild(listItem);
+          });
+
+          document.body.appendChild(messageList);
+        } else {
+          console.error('Error fetching messages:', data.message);
+        }
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
